@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 import Link from "next/link";
 import { ArrowLeft, Sparkles, Loader2 } from "lucide-react";
 
@@ -18,6 +19,7 @@ const genres = [
 
 export default function NewProjectPage() {
     const router = useRouter();
+    const { getToken } = useAuth();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
@@ -36,11 +38,12 @@ export default function NewProjectPage() {
         setError(null);
 
         try {
+            const token = await getToken();
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/projects`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    // TODO: Add auth token from Clerk
+                    "Authorization": `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     title: title.trim(),
@@ -52,13 +55,16 @@ export default function NewProjectPage() {
             });
 
             if (!response.ok) {
-                throw new Error("Failed to create project");
+                // Try to parse error message
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(errData.error || `Failed to create project: ${response.statusText}`);
             }
 
             const data = await response.json();
             router.push(`/dashboard/projects/${data.project.id}`);
         } catch (err) {
-            setError("Failed to create project. Please try again.");
+            console.error("Project creation error:", err);
+            setError(err instanceof Error ? err.message : "Failed to create project. Please try again.");
             setIsCreating(false);
         }
     };
@@ -130,8 +136,8 @@ export default function NewProjectPage() {
                                     selectedGenre === genre.id ? null : genre.id
                                 )}
                                 className={`p-3 rounded-lg border text-center transition-all ${selectedGenre === genre.id
-                                        ? "border-primary bg-primary/10"
-                                        : "border-input hover:border-primary/50"
+                                    ? "border-primary bg-primary/10"
+                                    : "border-input hover:border-primary/50"
                                     }`}
                                 disabled={isCreating}
                             >
