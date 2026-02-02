@@ -1,0 +1,32 @@
+{
+    "name": "@repo/database",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "main": "./src/index.ts",
+    "types": "./src/index.ts",
+    "scripts": {
+        "db:generate": "drizzle-kit generate",
+        "db:push": "drizzle-kit push",
+        "db:migrate": "drizzle-kit migrate",
+        "db:studio": "drizzle-kit studio",
+        "db:seed": "tsx src/seed.ts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "type-check": "tsc --noEmit",
+        "clean": "rimraf dist .turbo node_modules"
+    },
+    "dependencies": {
+        "@repo/shared": "workspace:*",
+        "drizzle-orm": "^0.45.1",
+        "pg": "^8.11.0",
+        "postgres": "^3.4.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.0",
+        "@types/pg": "^8.10.0",
+        "drizzle-kit": "^0.31.8",
+        "rimraf": "^5.0.5",
+        "tsup": "^8.0.0",
+        "typescript": "^5.3.3"
+    }
+}

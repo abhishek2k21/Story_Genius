@@ -1,0 +1,42 @@
+{
+    "name": "api",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "tsx watch src/index.ts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "start": "node dist/index.js",
+        "lint": "eslint src --ext ts",
+        "type-check": "tsc --noEmit",
+        "clean": "rimraf dist .turbo node_modules"
+    },
+    "dependencies": {
+        "@clerk/backend": "^1.0.0",
+        "@hono/node-server": "^1.8.0",
+        "@hono/zod-validator": "^0.7.6",
+        "@repo/ai": "workspace:*",
+        "@repo/database": "workspace:*",
+        "@repo/queue": "workspace:*",
+        "@repo/shared": "workspace:*",
+        "@repo/storage": "workspace:*",
+        "@sentry/node": "^7.100.0",
+        "bullmq": "^5.1.0",
+        "cheerio": "^1.2.0",
+        "dotenv": "^16.4.0",
+        "drizzle-orm": "^0.45.1",
+        "hono": "^4.0.0",
+        "ioredis": "^5.3.0",
+        "mammoth": "^1.11.0",
+        "svix": "^1.84.1",
+        "zod": "^3.22.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.0",
+        "eslint": "^8.56.0",
+        "rimraf": "^5.0.5",
+        "tsup": "^8.0.0",
+        "tsx": "^4.7.0",
+        "typescript": "^5.3.3"
+    }
+}

@@ -1,0 +1,27 @@
+{
+    "name": "@repo/video",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "main": "./src/index.ts",
+    "types": "./src/index.ts",
+    "scripts": {
+        "build": "tsup src/index.ts --format esm --dts",
+        "type-check": "tsc --noEmit",
+        "clean": "rimraf dist .turbo node_modules"
+    },
+    "dependencies": {
+        "@ffmpeg-installer/ffmpeg": "^1.1.0",
+        "@repo/shared": "workspace:*",
+        "fluent-ffmpeg": "^2.1.2",
+        "fs-extra": "^11.2.0"
+    },
+    "devDependencies": {
+        "@types/fluent-ffmpeg": "^2.1.24",
+        "@types/fs-extra": "^11.0.4",
+        "@types/node": "^20.11.0",
+        "rimraf": "^5.0.5",
+        "tsup": "^8.0.0",
+        "typescript": "^5.3.3"
+    }
+}

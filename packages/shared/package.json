@@ -1,0 +1,22 @@
+{
+    "name": "@repo/shared",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "main": "./src/index.ts",
+    "types": "./src/index.ts",
+    "scripts": {
+        "build": "tsup src/index.ts --format esm --dts",
+        "type-check": "tsc --noEmit",
+        "clean": "rimraf dist .turbo node_modules"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.0",
+        "rimraf": "^5.0.5",
+        "tsup": "^8.0.0",
+        "typescript": "^5.3.3"
+    },
+    "dependencies": {
+        "zod": "^3.22.0"
+    }
+}

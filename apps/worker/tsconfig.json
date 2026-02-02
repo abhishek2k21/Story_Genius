@@ -1,0 +1,61 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "target": "ES2022",
+        "lib": [
+            "ES2022"
+        ],
+        "types": [
+            "node"
+        ],
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ],
+            "@repo/database/*": [
+                "../../packages/database/src/*"
+            ],
+            "@repo/ai/*": [
+                "../../packages/ai/src/*"
+            ],
+            "@repo/shared/*": [
+                "../../packages/shared/src/*"
+            ],
+            "@repo/storage": [
+                "../../packages/storage/src/index.ts"
+            ],
+            "@repo/storage/*": [
+                "../../packages/storage/src/*"
+            ],
+            "@repo/queue": [
+                "../../packages/queue/src/index.ts"
+            ],
+            "@repo/queue/*": [
+                "../../packages/queue/src/*"
+            ],
+            "@repo/video": [
+                "../../packages/video/src/index.ts"
+            ],
+            "@repo/video/*": [
+                "../../packages/video/src/*"
+            ],
+            "@repo/database": [
+                "../../packages/database/src/index.ts"
+            ],
+            "@repo/ai": [
+                "../../packages/ai/src/index.ts"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}
