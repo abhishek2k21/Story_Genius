@@ -19,6 +19,7 @@
         "@repo/shared": "workspace:*",
         "@repo/storage": "workspace:*",
         "@repo/video": "workspace:*",
+        "axios": "^1.13.4",
         "bullmq": "^5.1.0",
         "dotenv": "^16.4.0",
         "fs-extra": "^11.2.0",

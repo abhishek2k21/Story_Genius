@@ -235,6 +235,9 @@ importers:
       '@repo/video':
         specifier: workspace:*
         version: link:../../packages/video
+      axios:
+        specifier: ^1.13.4
+        version: 1.13.4
       bullmq:
         specifier: ^5.1.0
         version: 5.67.2
@@ -287,6 +290,9 @@ importers:
       axios:
         specifier: ^1.13.4
         version: 1.13.4
+      dotenv:
+        specifier: ^16.4.0
+        version: 16.6.1
       elevenlabs:
         specifier: ^1.59.0
         version: 1.59.0
