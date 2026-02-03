@@ -80,14 +80,14 @@ async function runDemo() {
 
     // A. Audio (Mocked for Demo)
     console.log("   - 🎙️  Generating Narration (Mocking)...");
-    const audioBuffer = Buffer.from("mock-audio-data");
-    // const audioBuffer = await audioGenerator.generateNarration({
-    //     text: "Even metal hearts can feel the weight of silence.",
-    //     provider: "google",
-    //     options: { gender: "MALE" }
-    // });
-    const audioKey = `projects/${projectId}/scenes/${sceneId}/audio/narration.mp3`;
-    await storage.uploadBuffer(audioBuffer, "narration.mp3", `projects/${projectId}/scenes/${sceneId}/audio`);
+    const tempAudioPath = path.join(os.tmpdir(), `demo-audio-${sceneId}.mp3`);
+    await ffmpegClient.createBlankAudio(tempAudioPath, 5);
+    const audioBuffer = await fs.readFile(tempAudioPath);
+
+    // Upload returns the actual key (which might use UUID)
+    const audioResult = await storage.uploadBuffer(audioBuffer, "narration.mp3", `projects/${projectId}/scenes/${sceneId}/audio`);
+    const audioKey = audioResult.key;
+    await fs.remove(tempAudioPath);
     console.log(`   - ✅ Audio Uploaded: ${audioKey}`);
 
     // B. Video (Simulated Realism via FFmpeg)
@@ -98,8 +98,10 @@ async function runDemo() {
     await ffmpegClient.createBlankVideo(tempVideoPath, 5, "blue");
 
     const videoBuffer = await fs.readFile(tempVideoPath);
-    const videoKey = `projects/${projectId}/scenes/${sceneId}/videos/final-demo-${sceneId}.mp4`;
-    await storage.uploadBuffer(videoBuffer, "final.mp4", `projects/${projectId}/scenes/${sceneId}/videos`);
+
+    // Use uploadVideo to ensure "final-" naming pattern which worker expects
+    const videoResult = await storage.uploadVideo(videoBuffer, projectId, sceneId, "final-demo");
+    const videoKey = videoResult.key;
 
     // Clean up temp
     await fs.remove(tempVideoPath);

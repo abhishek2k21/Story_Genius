@@ -133,6 +133,23 @@ export class FFmpegClient {
                 .run();
         });
     }
+
+    /**
+     * Create blank audio (silence)
+     */
+    async createBlankAudio(outputPath: string, duration: number): Promise<void> {
+        return new Promise((resolve, reject) => {
+            ffmpeg()
+                .input(`anullsrc=r=44100:cl=stereo`)
+                .inputFormat("lavfi")
+                .output(outputPath)
+                .duration(duration)
+                .audioCodec("libmp3lame")
+                .on("end", () => resolve())
+                .on("error", (err) => reject(err))
+                .run();
+        });
+    }
 }
 
 export const ffmpegClient = new FFmpegClient();
