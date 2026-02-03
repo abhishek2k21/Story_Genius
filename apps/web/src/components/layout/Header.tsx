@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronRight, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { UserButton } from "@clerk/nextjs";
+import { useState, useEffect } from "react";
 
 // Generate breadcrumbs from pathname
 function generateBreadcrumbs(pathname: string) {
@@ -27,6 +28,11 @@ export function Header() {
     const pathname = usePathname();
     const breadcrumbs = generateBreadcrumbs(pathname);
     const { theme, setTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     return (
         <header className="h-16 border-b border-border bg-card/50 backdrop-blur-sm flex items-center justify-between px-6">
@@ -67,10 +73,14 @@ export function Header() {
                     className="p-2 rounded-lg hover:bg-muted transition-colors"
                     aria-label="Toggle theme"
                 >
-                    {theme === "dark" ? (
-                        <Sun className="w-5 h-5" />
+                    {mounted ? (
+                        theme === "dark" ? (
+                            <Sun className="w-5 h-5" />
+                        ) : (
+                            <Moon className="w-5 h-5" />
+                        )
                     ) : (
-                        <Moon className="w-5 h-5" />
+                        <div className="w-5 h-5" /> // Placeholder matching size
                     )}
                 </button>
 
