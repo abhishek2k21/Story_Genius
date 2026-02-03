@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 import {
     ArrowLeft,
     Download,
@@ -47,6 +48,7 @@ interface Chapter {
 export default function ProjectEditorPage() {
     const params = useParams();
     const router = useRouter();
+    const { getToken } = useAuth();
     const projectId = params.projectId as string;
 
     const [project, setProject] = useState<Project | null>(null);
@@ -64,15 +66,20 @@ export default function ProjectEditorPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                const token = await getToken();
                 // Fetch project
-                const projectRes = await fetch(`/api/projects/${projectId}`);
+                const projectRes = await fetch(`/api/projects/${projectId}`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
                 if (projectRes.ok) {
                     const { project: projectData } = await projectRes.json();
                     setProject(projectData);
                 }
 
                 // Fetch chapters
-                const chaptersRes = await fetch(`/api/projects/${projectId}/chapters`);
+                const chaptersRes = await fetch(`/api/projects/${projectId}/chapters`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
                 if (chaptersRes.ok) {
                     const { chapters: chaptersData } = await chaptersRes.json();
                     setChapters(chaptersData);
@@ -97,9 +104,13 @@ export default function ProjectEditorPage() {
         if (!activeChapterId) return;
 
         try {
+            const token = await getToken();
             await fetch(`/api/chapters/${activeChapterId}`, {
                 method: "PATCH",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
                 body: JSON.stringify({ content }),
             });
 
@@ -127,9 +138,13 @@ export default function ProjectEditorPage() {
     // Add new chapter
     const handleAddChapter = async () => {
         try {
+            const token = await getToken();
             const res = await fetch(`/api/projects/${projectId}/chapters`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
                 body: JSON.stringify({ title: `Chapter ${chapters.length + 1}` }),
             });
 
@@ -146,9 +161,13 @@ export default function ProjectEditorPage() {
     // Rename chapter
     const handleRenameChapter = async (id: string, title: string) => {
         try {
+            const token = await getToken();
             await fetch(`/api/chapters/${id}`, {
                 method: "PATCH",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
                 body: JSON.stringify({ title }),
             });
 
@@ -163,7 +182,11 @@ export default function ProjectEditorPage() {
     // Delete chapter
     const handleDeleteChapter = async (id: string) => {
         try {
-            await fetch(`/api/chapters/${id}`, { method: "DELETE" });
+            const token = await getToken();
+            await fetch(`/api/chapters/${id}`, {
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
 
             const newChapters = chapters.filter((c) => c.id !== id);
             setChapters(newChapters);
@@ -181,9 +204,13 @@ export default function ProjectEditorPage() {
         setChapters(newChapters);
 
         try {
+            const token = await getToken();
             await fetch("/api/chapters/reorder", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
                 body: JSON.stringify({
                     chapters: newChapters.map((c) => ({ id: c.id, order: c.order })),
                 }),
@@ -200,9 +227,13 @@ export default function ProjectEditorPage() {
         } else {
             // Create new chapter with imported content
             try {
+                const token = await getToken();
                 const res = await fetch(`/api/projects/${projectId}/chapters`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
                     body: JSON.stringify({
                         title: source.startsWith("url:") ? source.slice(4) : "Imported Content",
                         content,
@@ -225,7 +256,11 @@ export default function ProjectEditorPage() {
         if (!confirm("Are you sure you want to delete this project?")) return;
 
         try {
-            await fetch(`/api/projects/${projectId}`, { method: "DELETE" });
+            const token = await getToken();
+            await fetch(`/api/projects/${projectId}`, {
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
             router.push("/dashboard/projects");
         } catch (error) {
             console.error("Error deleting project:", error);
