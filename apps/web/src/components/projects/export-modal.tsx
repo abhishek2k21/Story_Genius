@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 import { X, Video, Download, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ export function ExportModal({ isOpen, onClose, projectId, projectTitle, onExport
     const [isExporting, setIsExporting] = useState(false);
     const [exportStatus, setExportStatus] = useState<"idle" | "success" | "error">("idle");
     const [error, setError] = useState<string | null>(null);
+    const { getToken } = useAuth();
 
     const handleExport = async () => {
         setIsExporting(true);
@@ -29,9 +31,13 @@ export function ExportModal({ isOpen, onClose, projectId, projectTitle, onExport
         setError(null);
 
         try {
+            const token = await getToken();
             const response = await fetch(`/api/projects/${projectId}/export`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
                 body: JSON.stringify({ resolution, preset, format }),
             });
 
