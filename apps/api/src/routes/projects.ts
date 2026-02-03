@@ -85,12 +85,26 @@ projectRoutes.post("/", async (c) => {
         return c.json({ error: "Title is required" }, 400);
     }
 
-    const dbUser = await db.query.users.findFirst({
+    let dbUser = await db.query.users.findFirst({
         where: eq(users.clerkId, auth.clerkId),
     });
 
     if (!dbUser) {
-        return c.json({ error: "User not found" }, 404);
+        // JIT User Creation for Dev/Local environments where webhooks might fail
+        console.log(`⚠️ User not found for Clerk ID ${auth.clerkId}. create JIT user.`);
+
+        const [newUser] = await db.insert(users).values({
+            clerkId: auth.clerkId,
+            email: `${auth.clerkId}@dev.local`, // Fallback email
+            name: "New User",
+            planTier: "free",
+            creditsRemaining: 100,
+        }).returning();
+
+        dbUser = newUser;
+        if (!dbUser) {
+            return c.json({ error: "Failed to create user record" }, 500);
+        }
     }
 
     const [newProject] = await db.insert(projects).values({
